@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote | Secure Voting System</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗳️ Cast Your Vote</h1>
+        <p>Student ID: <strong id="studentId"><%= studentId %></strong></p>
+
+        <button onclick="vote()">Submit Vote</button>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        async function vote() {
+            const token = localStorage.getItem("token");
+            const message = document.getElementById("message");
+
+            try {
+                const res = await fetch("/vote", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    message.innerText = "✅ Vote submitted successfully!";
+                    message.style.color = "green";
+                } else {
+                    message.innerText = data.msg;
+                    message.style.color = "red";
+                }
+            } catch (error) {
+                console.error("Voting Error:", error);
+                message.innerText = "⚠️ Server error!";
+                message.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
